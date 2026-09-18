@@ -1,0 +1,3 @@
+# Security policy — SYNERGY Relative Value
+
+No production secrets in Git. Prefer customer OIDC/mTLS/JWKS, KMS-backed secrets, least-privilege credentials and restricted networks. Research output is not execution authority. PostgreSQL is authoritative audit; ClickHouse is analytical mirror. Pair/carry results must be validated under customer OOS/cost/capacity assumptions. No security or regulatory certification is claimed.
