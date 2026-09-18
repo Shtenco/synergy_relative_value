@@ -33,3 +33,5 @@ jobs:
           git add -A
           git commit -m "release: publish enterprise v2.0.0"
           git push origin HEAD:main
+
+# retrigger-v2
