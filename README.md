@@ -2,6 +2,8 @@
 
 > **Pairs, synthetic-cross, carry and market-neutral research engine**
 
+Version: `2.0.0`
+
 **Enterprise v2.0.0** · FastAPI/OpenAPI · Docker/Compose · RBAC/JWT · PostgreSQL/ClickHouse audit
 
 **Designed for:** FX desks, macro funds, prop firms and systematic relative-value teams  
