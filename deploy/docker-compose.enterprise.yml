@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: ..
+    command: ["uvicorn", "synergy_relative_value.api:app", "--host", "0.0.0.0", "--port", "8000"]
+    env_file:
+      - ../.env.enterprise
+    ports: ["8000:8000"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/enterprise/health',timeout=2).read()"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  postgres:
+    image: postgres:16-alpine
+    env_file:
+      - ../.env.enterprise
+    environment:
+      POSTGRES_USER: synergy
+      POSTGRES_DB: synergy
+    volumes:
+      - ./postgres/001_audit.sql:/docker-entrypoint-initdb.d/001_audit.sql:ro
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synergy -d synergy"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    env_file:
+      - ../.env.enterprise
+    volumes:
+      - ./clickhouse/001_audit.sql:/docker-entrypoint-initdb.d/001_audit.sql:ro
+      - clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8123/ping | grep Ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  postgres-data:
+  clickhouse-data:
