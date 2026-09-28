@@ -59,3 +59,70 @@ flowchart LR
 `GREEN` означает только воспроизводимо подтверждённый тезис. Гипотеза, benchmark без корректного протокола, архитектурная диаграмма или красивый экономический цикл сами по себе GREEN не дают.
 
 <!-- SYNERGY-FEDERATION-PASSPORT:END -->
+---
+
+# ⚖️ Глубокая техническая спецификация Relative Value
+
+## 🎯 Проблема
+
+Низкий spread/z-score или историческая корреляция не доказывают стационарность, hedgeability или market-neutrality.
+
+## 🏗️ Pipeline
+
+```mermaid
+flowchart LR
+    N0[Asset universe] --> N1[Pair/synthetic construction] --> N2[Hedge-ratio estimation] --> N3[Residual / carry analysis] --> N4[Regime/stability checks] --> N5[Cost + borrow filter] --> N6[Candidate relative-value trade]
+```
+
+## 📥 Входы
+
+- price histories;
+- carry/funding;
+- contract specs;
+- borrow/shortability;
+- transaction costs;
+- regime features;
+
+## 📤 Выходы
+
+- pair/synthetic definition;
+- hedge ratio;
+- residual/z-score;
+- stability diagnostics;
+- costed candidate;
+
+## 🛡️ Непереговорные инварианты
+
+```text
+correlation != cointegration
+historical beta != executable hedge
+carry must include financing/borrow
+market-neutral claim requires residual exposure check
+OOS stability required
+```
+
+## 🧪 Как ловить ложный GREEN
+
+- отделять API/health benchmark от качества торгового решения;
+- проверять stale-state и timestamp binding;
+- иметь negative/adversarial tests;
+- не считать unit-test coverage доказательством инвестиционной ценности;
+- сохранять request → decision → downstream evidence chain;
+- явно указывать, что измерено локально, а что требует customer/live validation.
+
+## 🔗 Контракт с соседями
+
+- [`synergy_market_graph`](https://github.com/Shtenco/synergy_market_graph)
+- [`synergy_quantlab`](https://github.com/Shtenco/synergy_quantlab)
+- [`synergy_riskguard`](https://github.com/Shtenco/synergy_riskguard)
+- [`synergy_midas_ai`](https://github.com/Shtenco/synergy_midas_ai)
+
+## 🚀 Следующий доказательный рубеж
+
+1. frozen acceptance dataset;
+2. adversarial fixtures;
+3. cross-module typed contract;
+4. end-to-end trace id;
+5. OOS/shadow evidence where market quality is claimed;
+6. explicit failure-mode table;
+7. reproducible evidence bundle referenced from README.
