@@ -1,128 +1,245 @@
-# SYNERGY Relative Value
+# ⚖️ SYNERGY Relative Value — verified technical dossier
 
-> **Pairs, synthetic-cross, carry and market-neutral research engine**
+> **Статус:** 🟡 CANDIDATE research producer.
+> **Проверено по фактическому `main`:** 29.09.2026.
 
-Version: `2.0.0`
+## 1. 🎯 Задача
 
-**Enterprise v2.0.0** · FastAPI/OpenAPI · Docker/Compose · RBAC/JWT · PostgreSQL/ClickHouse audit
+Repository реализует компактные relative-value primitives:
 
-**Designed for:** FX desks, macro funds, prop firms and systematic relative-value teams  
-**Primary endpoint:** `POST /enterprise/v1/relative-value/analyze`
+- linear pair fit;
+- spread z-score;
+- carry score;
+- synthetic path rate;
+- federation relative-value signal.
 
-> [!IMPORTANT]
-> Research infrastructure only. Pair relationships, z-scores and carry do not guarantee market-neutrality or profit.
+Это research evidence producer, не autonomous trading strategy.
 
-## Verification
-**20 tests passed** · health smoke **80/80 200** · local p95 **59.8 ms** (~652 req/s). Health smoke only.
+## 2. 📦 Фактический состав
 
-## Quick start
-```bash
-pip install -e '.[dev,enterprise]'
-pytest -q
-python -m synergy_relative_value.api
-```
+В `main` есть Python package, enterprise API/auth/audit layer, tests, Docker/deploy/loadtests/docs/examples.
 
-## CTO package
-[Due diligence](docs/CTO_DUE_DILIGENCE.md) · [Architecture](docs/ARCHITECTURE_DIAGRAMS.md) · [API](docs/API_EXAMPLES.md) · [Security](SECURITY.md) · [Benchmarks](docs/BENCHMARKS_AND_ACCEPTANCE.md) · [SLA/SLO](docs/SLA_SLO.md) · [Deployment](docs/DEPLOYMENT_CHECKLIST.md) · [Pilot](docs/CUSTOMER_PILOT.md)
-
-
-<!-- SYNERGY-FEDERATION-PASSPORT:START -->
----
-
-## 🧭 SYNERGY federation passport
-
-**Домен:** ⚖️ Relative-value research  
-**Архитектурный родитель:** [`synergy_midas_ai`](https://github.com/Shtenco/synergy_midas_ai)  
-**Архитектурный корень:** [`synergy_system`](https://github.com/Shtenco/synergy_system)
-
-```mermaid
-flowchart LR
-    SYS[🧭 synergy_system] --> P[synergy_midas_ai]
-    P --> THIS[synergy_relative_value]
-    THIS --> E[📦 Evidence / outputs]
-```
-
-Архитектурная стрелка — это карта федерации, а не автоматически подтверждённая runtime dependency.
-
-### Единый стандарт
-
-Каждый проект должен документировать реальную проблему, реализацию, тесты, evidence, ограничения, file map, воспроизводимость, roadmap и границы утверждений. Это тот же принцип, который используется в `dlp_solver`.
-
-### Навигация
-
-- [📚 Атлас всех 75 репозиториев](https://github.com/Shtenco/synergy_system/blob/main/docs/SYNERGY_REPOSITORY_ATLAS.md)
-- [🧾 Машиночитаемый registry](https://github.com/Shtenco/synergy_system/blob/main/registry/SYNERGY_REPOSITORIES.json)
-- [🧭 SYNERGY SYSTEM](https://github.com/Shtenco/synergy_system)
-
-### Evidence rule
-
-`GREEN` означает только воспроизводимо подтверждённый тезис. Гипотеза, benchmark без корректного протокола, архитектурная диаграмма или красивый экономический цикл сами по себе GREEN не дают.
-
-<!-- SYNERGY-FEDERATION-PASSPORT:END -->
----
-
-# ⚖️ Глубокая техническая спецификация Relative Value
-
-## 🎯 Проблема
-
-Низкий spread/z-score или историческая корреляция не доказывают стационарность, hedgeability или market-neutrality.
-
-## 🏗️ Pipeline
-
-```mermaid
-flowchart LR
-    N0[Asset universe] --> N1[Pair/synthetic construction] --> N2[Hedge-ratio estimation] --> N3[Residual / carry analysis] --> N4[Regime/stability checks] --> N5[Cost + borrow filter] --> N6[Candidate relative-value trade]
-```
-
-## 📥 Входы
-
-- price histories;
-- carry/funding;
-- contract specs;
-- borrow/shortability;
-- transaction costs;
-- regime features;
-
-## 📤 Выходы
-
-- pair/synthetic definition;
-- hedge ratio;
-- residual/z-score;
-- stability diagnostics;
-- costed candidate;
-
-## 🛡️ Непереговорные инварианты
+Core:
 
 ```text
-correlation != cointegration
-historical beta != executable hedge
-carry must include financing/borrow
-market-neutral claim requires residual exposure check
-OOS stability required
+src/synergy_relative_value/core.py
+src/synergy_relative_value/synergy_contracts.py
 ```
 
-## 🧪 Как ловить ложный GREEN
+## 3. 🧠 Pair model
 
-- отделять API/health benchmark от качества торгового решения;
-- проверять stale-state и timestamp binding;
-- иметь negative/adversarial tests;
-- не считать unit-test coverage доказательством инвестиционной ценности;
-- сохранять request → decision → downstream evidence chain;
-- явно указывать, что измерено локально, а что требует customer/live validation.
+Линейная модель:
 
-## 🔗 Контракт с соседями
+[
+y_t=alpha+eta x_t+epsilon_t
+]
 
-- [`synergy_market_graph`](https://github.com/Shtenco/synergy_market_graph)
-- [`synergy_quantlab`](https://github.com/Shtenco/synergy_quantlab)
-- [`synergy_riskguard`](https://github.com/Shtenco/synergy_riskguard)
-- [`synergy_midas_ai`](https://github.com/Shtenco/synergy_midas_ai)
+`fit_pair(x,y)` использует least squares и требует:
 
-## 🚀 Следующий доказательный рубеж
+- aligned histories;
+- одинаковую длину;
+- минимум 10 observations.
 
-1. frozen acceptance dataset;
-2. adversarial fixtures;
-3. cross-module typed contract;
-4. end-to-end trace id;
-5. OOS/shadow evidence where market quality is claimed;
-6. explicit failure-mode table;
-7. reproducible evidence bundle referenced from README.
+Spread:
+
+[
+s_t=y_t-(alpha+eta x_t)
+]
+
+Хранятся:
+
+- alpha;
+- beta;
+- spread mean;
+- sample spread std.
+
+Current z-score:
+
+[
+z=
+rac{s_{now}-mu_s}{sigma_s}
+]
+
+Если spread std <=0, z-score принудительно 0.
+
+## 4. 💹 Carry score
+
+[
+CarryScore=
+rac{expectedCarryBps/10000}{volatility}
+	imes clamp(corrHedge,0,1)
+]
+
+Если volatility <=0 → 0.
+
+Это heuristic normalized carry score, не expected return estimate.
+
+## 5. 🔗 Synthetic rate
+
+Для path rates:
+
+[
+R_{synthetic}=prod_i r_i
+]
+
+Любой non-positive rate → reject.
+
+## 6. 🏗️ Архитектура
+
+```mermaid
+flowchart LR
+    X[X history] --> FIT[OLS pair fit]
+    Y[Y history] --> FIT
+    FIT --> PM[PairModel]
+    NOW[Current X/Y] --> Z[Spread z-score]
+    PM --> Z
+    Z --> C[relative-value-signal/v1]
+    C --> MIDAS[synergy_midas_ai]
+```
+
+## 7. Federation contract
+
+```text
+CONTRACT_ID = synergy.trading.relative-value-signal/v1
+AUTHORITY   = relative_value_research
+```
+
+Payload включает:
+
+- observation id;
+- symbols;
+- alpha/beta;
+- spread mean/std;
+- current zscore;
+- `authorization=false`;
+- `requires_domain_validation=true`.
+
+## 8. 🛡️ Authority boundaries
+
+```text
+high |z| != guaranteed mean reversion
+OLS relation != cointegration proof
+historical beta != stable hedge ratio
+carry score != realized carry
+relative-value signal != execution authorization
+```
+
+## 9. ⚠️ Statistical limitations
+
+Current core не проверяет:
+
+- stationarity;
+- cointegration;
+- structural breaks;
+- parameter uncertainty;
+- half-life;
+- residual autocorrelation;
+- time-varying beta;
+- costs/borrow/funding;
+- asynchronous prices.
+
+Поэтому pair z-score нужно считать feature/research signal.
+
+## 10. 🧪 Required research gates
+
+Перед использованием real capital:
+
+1. aligned timestamps;
+2. strict train/OOS separation;
+3. Engle-Granger/Johansen or justified alternative;
+4. spread stationarity;
+5. rolling stability;
+6. transaction costs;
+7. borrow/funding;
+8. liquidity;
+9. stop/exit policy;
+10. multiple-pair selection bias.
+
+## 11. 📥 Inputs / 📤 Outputs
+
+Inputs:
+
+- observation id;
+- x/y symbols;
+- histories;
+- current x/y.
+
+Output: fitted relative-value state + z-score + explicit non-authorization flags.
+
+## 12. 🧪 Required negative tests
+
+- mismatched lengths;
+- <10 observations;
+- constant spread;
+- sudden beta break;
+- shuffled pair;
+- missing data;
+- large outlier;
+- non-positive synthetic rates;
+- volatility <=0 carry case;
+- costs erase apparent edge.
+
+## 13. 🛠️ Воспроизводимость
+
+```bash
+git clone https://github.com/Shtenco/synergy_relative_value.git
+cd synergy_relative_value
+python -m pip install -e .
+pytest -q
+```
+
+## 14. 🗺️ Карта repository
+
+| Path | Role |
+|---|---|
+| `src/.../core.py` | OLS/z-score/carry/synthetic rate |
+| `src/.../synergy_contracts.py` | relative-value-signal/v1 |
+| `src/.../api.py` | API |
+| enterprise | auth/audit |
+| tests | product/service/deploy/contracts |
+| Docker/deploy/loadtests | operational scaffold |
+
+## 15. 🔗 Место в SYNERGY
+
+```text
+relative-value research
+→ relative-value-signal/v1
+→ synergy_midas_ai
+→ validation/risk/execution
+```
+
+## 16. 📊 Evidence maturity
+
+| Layer | Status |
+|---|---|
+| OLS pair fit | ✅ |
+| z-score | ✅ |
+| typed signal | ✅ |
+| enterprise scaffold | ✅ |
+| cointegration proof | ❌ |
+| historical OOS | ❌ |
+| cost-adjusted alpha | ❌ |
+| observed M4 E2E | ❌ |
+
+## 17. 🚀 Roadmap
+
+- timestamp provenance;
+- stationarity/cointegration;
+- rolling beta;
+- half-life;
+- cost model;
+- OOS pair selection;
+- portfolio-level neutralization;
+- observed federation evidence.
+
+## 18. 🛑 Что проект НЕ утверждает
+
+- mean reversion is guaranteed;
+- OLS = cointegration;
+- z-score = trade;
+- current beta is stable;
+- source code proves live profitability.
+
+---
+
+[🧭 SYNERGY SYSTEM](https://github.com/Shtenco/synergy_system) · [📚 Atlas](https://github.com/Shtenco/synergy_system/blob/main/docs/SYNERGY_REPOSITORY_ATLAS.md)
