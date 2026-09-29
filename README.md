@@ -240,6 +240,112 @@ relative-value research
 - current beta is stable;
 - source code proves live profitability.
 
+## 19. 🔬 Cointegration is the central missing proof
+
+The current OLS relation:
+
+[
+y_t=alpha+eta x_t+epsilon_t
+]
+
+can fit two trending unrelated price series and produce an apparently meaningful spread.
+
+A production relative-value pipeline should explicitly test whether spread behavior supports mean reversion.
+
+Minimum evidence:
+
+- unit-root properties of raw series;
+- residual stationarity;
+- test statistic / critical values;
+- training-only fit;
+- OOS spread evolution;
+- structural-break diagnostics.
+
+## 20. ⏱️ Temporal alignment requirements
+
+Pair data must be aligned by timestamp and market availability.
+
+Unsafe examples:
+
+```text
+X close at 10:00
+Y quote observed at 10:05
+→ treated as simultaneous
+```
+
+or forward-filled illiquid prices creating synthetic stability.
+
+Evidence should preserve:
+
+```text
+source
+venue
+timestamp
+staleness
+calendar
+timezone
+```
+
+for both legs.
+
+## 21. 💸 Full relative-value economics
+
+A z-score is not P&L. A complete experiment must model:
+
+[
+PnL =
+Delta Y
+-etaDelta X
+-Carry
+-Borrow
+-Fees
+-Slippage
+-Funding
+]
+
+with sign conventions appropriate to the actual long/short legs.
+
+For FX/synthetic paths, rollover/swap and execution sequence matter.
+
+## 22. 🧪 Falsification tests
+
+A strong research suite should include:
+
+- shuffled pairing;
+- lagged fake partner;
+- independent random walk;
+- regime break injected into beta;
+- spread variance explosion;
+- cost ×2 / ×4;
+- delayed leg execution;
+- unavailable borrow;
+- forced exit.
+
+A strategy that only works on the original curated pair but fails basic null controls should not be promoted.
+
+## 23. 📋 Evidence bundle
+
+Store:
+
+```text
+observation_id
+pair
+train timestamps
+fit alpha/beta
+spread mean/std
+stationarity test
+current z
+entry/exit thresholds
+cost model
+OOS outcome
+software commit
+authorization=false
+```
+
+## 24. ✅ Promotion gate
+
+Before `relative-value-signal/v1` may be treated as validated research evidence, require strict OOS, stable pair diagnostics, costs and a QuantLab decision linked to the exact signal artifact.
+
 ---
 
 [🧭 SYNERGY SYSTEM](https://github.com/Shtenco/synergy_system) · [📚 Atlas](https://github.com/Shtenco/synergy_system/blob/main/docs/SYNERGY_REPOSITORY_ATLAS.md)
