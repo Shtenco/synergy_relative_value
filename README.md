@@ -1,9 +1,9 @@
-# ⚖️ SYNERGY Relative Value — verified technical dossier
+#  SYNERGY Relative Value — verified technical dossier
 
-> **Статус:** 🟡 CANDIDATE research producer.
+> **Статус:**  CANDIDATE research producer.
 > **Проверено по фактическому `main`:** 29.09.2026.
 
-## 1. 🎯 Задача
+## 1.  Задача
 
 Repository реализует компактные relative-value primitives:
 
@@ -15,7 +15,7 @@ Repository реализует компактные relative-value primitives:
 
 Это research evidence producer, не autonomous trading strategy.
 
-## 2. 📦 Фактический состав
+## 2.  Фактический состав
 
 В `main` есть Python package, enterprise API/auth/audit layer, tests, Docker/deploy/loadtests/docs/examples.
 
@@ -26,7 +26,7 @@ src/synergy_relative_value/core.py
 src/synergy_relative_value/synergy_contracts.py
 ```
 
-## 3. 🧠 Pair model
+## 3.  Pair model
 
 Линейная модель:
 
@@ -62,7 +62,7 @@ z=
 
 Если spread std <=0, z-score принудительно 0.
 
-## 4. 💹 Carry score
+## 4.  Carry score
 
 [
 CarryScore=
@@ -74,7 +74,7 @@ CarryScore=
 
 Это heuristic normalized carry score, не expected return estimate.
 
-## 5. 🔗 Synthetic rate
+## 5.  Synthetic rate
 
 Для path rates:
 
@@ -84,7 +84,7 @@ R_{synthetic}=prod_i r_i
 
 Любой non-positive rate → reject.
 
-## 6. 🏗️ Архитектура
+## 6.  Архитектура
 
 ```mermaid
 flowchart LR
@@ -114,7 +114,7 @@ Payload включает:
 - `authorization=false`;
 - `requires_domain_validation=true`.
 
-## 8. 🛡️ Authority boundaries
+## 8.  Authority boundaries
 
 ```text
 high |z| != guaranteed mean reversion
@@ -124,7 +124,7 @@ carry score != realized carry
 relative-value signal != execution authorization
 ```
 
-## 9. ⚠️ Statistical limitations
+## 9.  Statistical limitations
 
 Current core не проверяет:
 
@@ -140,7 +140,7 @@ Current core не проверяет:
 
 Поэтому pair z-score нужно считать feature/research signal.
 
-## 10. 🧪 Required research gates
+## 10.  Required research gates
 
 Перед использованием real capital:
 
@@ -155,7 +155,7 @@ Current core не проверяет:
 9. stop/exit policy;
 10. multiple-pair selection bias.
 
-## 11. 📥 Inputs / 📤 Outputs
+## 11.  Inputs /  Outputs
 
 Inputs:
 
@@ -166,7 +166,7 @@ Inputs:
 
 Output: fitted relative-value state + z-score + explicit non-authorization flags.
 
-## 12. 🧪 Required negative tests
+## 12.  Required negative tests
 
 - mismatched lengths;
 - <10 observations;
@@ -179,7 +179,7 @@ Output: fitted relative-value state + z-score + explicit non-authorization flags
 - volatility <=0 carry case;
 - costs erase apparent edge.
 
-## 13. 🛠️ Воспроизводимость
+## 13.  Воспроизводимость
 
 ```bash
 git clone https://github.com/Shtenco/synergy_relative_value.git
@@ -188,7 +188,7 @@ python -m pip install -e .
 pytest -q
 ```
 
-## 14. 🗺️ Карта repository
+## 14.  Карта repository
 
 | Path | Role |
 |---|---|
@@ -199,7 +199,7 @@ pytest -q
 | tests | product/service/deploy/contracts |
 | Docker/deploy/loadtests | operational scaffold |
 
-## 15. 🔗 Место в SYNERGY
+## 15.  Место в SYNERGY
 
 ```text
 relative-value research
@@ -208,20 +208,20 @@ relative-value research
 → validation/risk/execution
 ```
 
-## 16. 📊 Evidence maturity
+## 16.  Evidence maturity
 
 | Layer | Status |
 |---|---|
-| OLS pair fit | ✅ |
-| z-score | ✅ |
-| typed signal | ✅ |
-| enterprise scaffold | ✅ |
-| cointegration proof | ❌ |
-| historical OOS | ❌ |
-| cost-adjusted alpha | ❌ |
-| observed M4 E2E | ❌ |
+| OLS pair fit |  |
+| z-score |  |
+| typed signal |  |
+| enterprise scaffold |  |
+| cointegration proof |  |
+| historical OOS |  |
+| cost-adjusted alpha |  |
+| observed M4 E2E |  |
 
-## 17. 🚀 Roadmap
+## 17.  Roadmap
 
 - timestamp provenance;
 - stationarity/cointegration;
@@ -232,7 +232,7 @@ relative-value research
 - portfolio-level neutralization;
 - observed federation evidence.
 
-## 18. 🛑 Что проект НЕ утверждает
+## 18.  Что проект НЕ утверждает
 
 - mean reversion is guaranteed;
 - OLS = cointegration;
@@ -240,7 +240,7 @@ relative-value research
 - current beta is stable;
 - source code proves live profitability.
 
-## 19. 🔬 Cointegration is the central missing proof
+## 19.  Cointegration is the central missing proof
 
 The current OLS relation:
 
@@ -261,7 +261,7 @@ Minimum evidence:
 - OOS spread evolution;
 - structural-break diagnostics.
 
-## 20. ⏱️ Temporal alignment requirements
+## 20.  Temporal alignment requirements
 
 Pair data must be aligned by timestamp and market availability.
 
@@ -288,7 +288,7 @@ timezone
 
 for both legs.
 
-## 21. 💸 Full relative-value economics
+## 21.  Full relative-value economics
 
 A z-score is not P&L. A complete experiment must model:
 
@@ -307,7 +307,7 @@ with sign conventions appropriate to the actual long/short legs.
 
 For FX/synthetic paths, rollover/swap and execution sequence matter.
 
-## 22. 🧪 Falsification tests
+## 22.  Falsification tests
 
 A strong research suite should include:
 
@@ -323,7 +323,7 @@ A strong research suite should include:
 
 A strategy that only works on the original curated pair but fails basic null controls should not be promoted.
 
-## 23. 📋 Evidence bundle
+## 23.  Evidence bundle
 
 Store:
 
@@ -342,10 +342,10 @@ software commit
 authorization=false
 ```
 
-## 24. ✅ Promotion gate
+## 24.  Promotion gate
 
 Before `relative-value-signal/v1` may be treated as validated research evidence, require strict OOS, stable pair diagnostics, costs and a QuantLab decision linked to the exact signal artifact.
 
 ---
 
-[🧭 SYNERGY SYSTEM](https://github.com/Shtenco/synergy_system) · [📚 Atlas](https://github.com/Shtenco/synergy_system/blob/main/docs/SYNERGY_REPOSITORY_ATLAS.md)
+[ SYNERGY SYSTEM](https://github.com/Shtenco/synergy_system) · [ Atlas](https://github.com/Shtenco/synergy_system/blob/main/docs/SYNERGY_REPOSITORY_ATLAS.md)
