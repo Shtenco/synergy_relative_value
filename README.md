@@ -1,3 +1,9 @@
+<!-- SCIENTIFIC-V4-2026:START -->
+<img src="assets/readme/scientific-architecture-v4.svg" width="100%" alt="RELATIVE VALUE / PAIR RESEARCH"/>
+
+[Научно-техническое досье V4](docs/SCIENTIFIC_DOSSIER_V4_2026.md) — математическая модель, архитектура, эксперименты. Исходный README ниже сохранён полностью.
+<!-- SCIENTIFIC-V4-2026:END -->
+
 #  SYNERGY Relative Value — verified technical dossier
 
 > **Статус:**  CANDIDATE research producer.
